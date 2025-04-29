@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Агенты Призраков</title>
+    <link rel="shortcut icon" href="https://i.imgur.com/C9sC9Bs.png" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const titles = ["Агенты Призраков", "Секретно"];
+            let index = 0;
+
+            setInterval(() => {
+                index = (index + 1) % titles.length;
+                document.title = titles[index];
+            }, 2000);
+
+            // Запускаем таймер при загрузке страницы (примерно совпадает с началом воспроизведения)
+            setTimeout(() => {
+                // Скрываем блок с видео
+                document.getElementById("introVideo").style.display = "none";
+
+                // Показываем блок с музыкой
+                document.getElementById("musicBlock").style.display = "flex";
+
+                // Показываем блок для будущего редактирования
+                document.getElementById("editableSection").style.display = "block";
+
+                // Включаем музыку
+                const audio = document.getElementById("bgMusic");
+                audio.muted = false;
+                audio.play().catch(function (error) {
+                    console.log("Autoplay music failed:", error);
+                });
+            }, 73000); // 73 секунды — замените на точную длительность видео, если отличается
+        });
+    </script>
+    <style>
+        body {
+            margin: 0;
+            background: url("https://fnggcdn.com/assets/FiUUNO.png") no-repeat center center fixed;
+            background-size: cover;
+            font-family: "MS Sans Serif", sans-serif;
+        }
+        header {
+            background-color: #ffffff;
+            padding: 10px;
+        }
+        header p {
+            margin: 0;
+        }
+        header img {
+            vertical-align: middle;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 5px;
+        }
+        header a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        /* Центровка видео */
+        #introVideo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+        #introVideo iframe {
+            width: 640px;
+            height: 360px;
+            border: 2px solid #fff;
+        }
+
+        /* Музыка слева */
+        #musicBlock {
+            display: none;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+            margin-left: 30px;
+        }
+
+        .cover-image {
+            width: 150px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 5px black;
+        }
+
+        /* Блок для будущего редактирования */
+        #editableSection {
+            display: none;
+            width: 70%;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #fff;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 200px;
+            color: #000;
+            font-family: "MS Sans Serif", sans-serif;
+            font-size: 16px;
+            overflow: auto;
+        }
+
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            #introVideo iframe {
+                width: 100%;
+                height: auto;
+            }
+            #editableSection {
+                width: 90%;
+            }
+            #musicBlock {
+                margin-left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <p align="right">
+            <img src="https://i.imgur.com/uhVl7Ma.png" alt="Логотип" height="100" width="100" align="left">
+            <font size="6">
+                <a href="#">Главная</a>
+                <a href="https://fortnite.fandom.com/wiki/GHOST">О нас</a>
+                <a href="#">Услуги</a>
+                <a href="#">Контакты</a>
+            </font>
+        </p>
+    </header>
+
+    <!-- Видео по центру -->
+    <div id="introVideo">
+        <iframe src="https://vk.com/video_ext.php?oid=-194614182&id=456239017&hash=c394462807f152dc" width="640" height="360" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture"></iframe>
+    </div>
+
+    <!-- Музыка слева + картинка -->
+    <div id="musicBlock">
+        <img class="cover-image" src="https://fortnite.gg/img/items/3373/featured.png?3" alt="Обложка">
+        <audio id="bgMusic" src="https://static.wikia.nocookie.net/fortnite/images/7/7e/Spies%21_-_Lobby_Music_-_Fortnite.ogg/revision/latest?cb=20210402210155" controls loop muted></audio>
+    </div>
+
+    <!-- Блок для будущего редактирования -->
+    <div id="editableSection">
+        скоро
+        <img src="https://i.imgur.com/iWIBWAh.png" height="100" width="100">
+    </div>
+</body>
+</html>
