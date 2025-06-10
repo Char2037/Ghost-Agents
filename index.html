@@ -1,155 +1,309 @@
-<!DOCTYPE html>
-<html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Агенты Призраков</title>
-    <link rel="shortcut icon" href="https://i.imgur.com/C9sC9Bs.png" />
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const titles = ["Агенты Призраков", "Секретно"];
-            let index = 0;
-
-            setInterval(() => {
-                index = (index + 1) % titles.length;
-                document.title = titles[index];
-            }, 2000);
-
-            // Запускаем таймер при загрузке страницы (примерно совпадает с началом воспроизведения)
-            setTimeout(() => {
-                // Скрываем блок с видео
-                document.getElementById("introVideo").style.display = "none";
-
-                // Показываем блок с музыкой
-                document.getElementById("musicBlock").style.display = "flex";
-
-                // Показываем блок для будущего редактирования
-                document.getElementById("editableSection").style.display = "block";
-
-                // Включаем музыку
-                const audio = document.getElementById("bgMusic");
-                audio.muted = false;
-                audio.play().catch(function (error) {
-                    console.log("Autoplay music failed:", error);
-                });
-            }, 73000); // 73 секунды — замените на точную длительность видео, если отличается
-        });
-    </script>
+    <title>Агентство Призрак</title>
     <style>
         body {
             margin: 0;
-            background: url("https://fnggcdn.com/assets/FiUUNO.png") no-repeat center center fixed;
+            padding: 0;
+            background-image: url('ghost_background.jpg');
             background-size: cover;
-            font-family: "MS Sans Serif", sans-serif;
+            background-attachment: fixed;
+            color: #fff;
+            font-family: Arial, sans-serif;
         }
-        header {
-            background-color: #ffffff;
-            padding: 10px;
+        nav {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            z-index: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        header p {
+        nav img {
+            max-height: 50px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+        }
+        nav li {
+            margin-left: 15px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+        nav a:hover {
+            color: #ccc;
+        }
+        section {
+            padding: 10px 20px;
+            min-height: 100vh;
+        }
+        #home {
+            text-align: center;
+            margin-bottom: 0;
+        }
+        #home img {
+            max-width: 200px;
+            margin: 10px 0;
+        }
+        #home h1 {
             margin: 0;
         }
-        header img {
-            vertical-align: middle;
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 5px;
+        #about {
+            max-width: 600px;
+            margin-left: 20px;
+            text-align: left;
+            margin-top: 0;
         }
-        header a {
-            margin-left: 15px;
-            text-decoration: none;
-            color: #000;
+        #services {
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: 20px;
+            text-align: right;
         }
-
-        /* Центровка видео */
-        #introVideo {
-            display: flex;
+        #contact {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .service, .contact {
+            background-color: rgba(34, 34, 34, 0.8);
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #444;
+        }
+        button {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        h2, h3 {
+            margin: 10px 0;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        /* Modal Styles */
+        #order-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            margin-top: 50px;
         }
-        #introVideo iframe {
-            width: 640px;
-            height: 360px;
-            border: 2px solid #fff;
-        }
-
-        /* Музыка слева */
-        #musicBlock {
-            display: none;
-            flex-direction: column;
-            align-items: flex-start;
+        .modal-content {
+            background-color: #222;
             padding: 20px;
-            margin-left: 30px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid #444;
         }
-
-        .cover-image {
-            width: 150px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            box-shadow: 0 0 5px black;
+        .modal-content h3 {
+            margin-bottom: 15px;
         }
-
-        /* Блок для будущего редактирования */
-        #editableSection {
-            display: none;
-            width: 70%;
-            margin: 20px auto;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #fff;
-            border-radius: 10px;
-            padding: 20px;
-            min-height: 200px;
-            color: #000;
-            font-family: "MS Sans Serif", sans-serif;
-            font-size: 16px;
-            overflow: auto;
+        .modal-content label {
+            display: block;
+            margin: 10px 0 5px;
         }
-
-        /* Адаптивность для мобильных устройств */
-        @media (max-width: 768px) {
-            #introVideo iframe {
-                width: 100%;
-                height: auto;
-            }
-            #editableSection {
-                width: 90%;
-            }
-            #musicBlock {
-                margin-left: 10px;
-            }
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 8px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #444;
+        }
+        .modal-content button {
+            margin-top: 15px;
+        }
+        #close-modal {
+            float: right;
+            background-color: #777;
+        }
+        #close-modal:hover {
+            background-color: #999;
         }
     </style>
 </head>
 <body>
-    <header>
-        <p align="right">
-            <img src="https://i.imgur.com/uhVl7Ma.png" alt="Логотип" height="100" width="100" align="left">
-            <font size="6">
-                <a href="#">Главная</a>
-                <a href="https://fortnite.fandom.com/wiki/GHOST">О нас</a>
-                <a href="#">Услуги</a>
-                <a href="#">Контакты</a>
-            </font>
-        </p>
-    </header>
+    <nav>
+        <img src="ghost_logo.png" alt="Логотип Призрак">
+        <ul>
+            <li><a href="#home" onclick="scrollToSection('home')">Главная</a></li>
+            <li><a href="#about" onclick="scrollToSection('about')">О нас</a></li>
+            <li><a href="#services" onclick="scrollToSection('services')">Услуги</a></li>
+            <li><a href="#contact" onclick="scrollToSection('contact')">Контакты</a></li>
+        </ul>
+    </nav>
 
-    <!-- Видео по центру -->
-    <div id="introVideo">
-        <iframe src="https://vk.com/video_ext.php?oid=-194614182&id=456239017&hash=c394462807f152dc" width="640" height="360" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture"></iframe>
+    <section id="home">
+        <img src="ghost_logo.png" alt="Логотип Призрак">
+        <h1>Агентство Призрак</h1>
+        <p>Ведущая организация шпионажа и наемных операций на острове Аполло.</p>
+    </section>
+
+    <section id="about">
+        <h2>О нас</h2>
+        <h3>История</h3>
+        <p>Команда «Призрак» (GHOST) была основана легендарным агентом Мидасом во второй главе, первом сезоне Fortnite: Battle Royale. Стремясь создать империю шпионажа и влияния, Мидас объединил элитных оперативников для выполнения сложнейших миссий. С момента своего появления «Призрак» стала ключевым игроком в борьбе за контроль над островом.</p>
+        <h3>Заслуги</h3>
+        <ul>
+            <li>Основание штаб-квартиры «Агентство» — центра шпионских операций в Chapter 2: Season 2.</li>
+            <li>Контроль над стратегическими объектами: The Yacht, The Shark и The Fortilla.</li>
+            <li>Успешное противостояние фракции SHADOW в шпионской войне.</li>
+            <li>Разработка устройства Судного дня под руководством Мидаса и Джулс для борьбы со Штормом.</li>
+            <li>Создание The Fortilla — плавучей базы после наводнения на острове.</li>
+            <li>Привлечение элитных агентов, таких как Оушен, Скай и Миусклс.</li>
+        </ul>
+    </section>
+
+    <section id="services">
+        <h2>Услуги</h2>
+        <p>Мы предлагаем профессиональные услуги в области шпионажа и наемных операций.</p>
+        <div class="service">
+            <h3>Шпионаж</h3>
+            <p>Сбор разведданных и внедрение в структуры противника.</p>
+            <p><strong>Цена:</strong> 10,000 V-Bucks</p>
+        </div>
+        <div class="service">
+            <h3>Наемные операции</h3>
+            <p>Выполнение миссий любой сложности, от саботажа до защиты объектов.</p>
+            <p><strong>Цена:</strong> 15,000 V-Bucks</p>
+        </div>
+        <div class="service">
+            <h3>Контроль территории</h3>
+            <p>Обеспечение безопасности и управление стратегическими локациями.</p>
+            <p><strong>Цена:</strong> 20,000 V-Bucks</p>
+        </div>
+        <button onclick="openModal()">Заказать услуги</button>
+    </section>
+
+    <section id="contact">
+        <h2>Контакты</h2>
+        <p>Свяжитесь с нашими агентами для координации операций.</p>
+        <div class="contact">
+            <h3>Мидас</h3>
+            <p>Основатель GHOST. Специалист по стратегическому планированию.</p>
+            <p><strong>Контакт:</strong> midas@ghost.agency</p>
+        </div>
+        <div class="contact">
+            <h3>Оушен</h3>
+            <p>Командир The Fortilla. Эксперт по операциям на воде.</p>
+            <p><strong>Контакт:</strong> ocean@ghost.agency</p>
+        </div>
+        <div class="contact">
+            <h3>Скай</h3>
+            <p>Оперативник The Shark. Специалист по разведке.</p>
+            <p><strong>Контакт:</strong> skye@ghost.agency</p>
+        </div>
+        <div class="contact">
+            <h3>Миусклс</h3>
+            <p>Контролер The Yacht. Эксперт по безопасности.</p>
+            <p><strong>Контакт:</strong> meowscles@ghost.agency</p>
+        </div>
+    </section>
+
+    <!-- Order Modal -->
+    <div id="order-modal">
+        <div class="modal-content">
+            <button id="close-modal" onclick="closeModal()">Закрыть</button>
+            <h3>Заказ услуги</h3>
+            <label for="name">Имя:</label>
+            <input type="text" id="name" placeholder="Ваше имя">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Ваш email">
+            <label for="service">Услуга:</label>
+            <select id="service">
+                <option value="espionage">Шпионаж</option>
+                <option value="mercenary">Наемные операции</option>
+                <option value="territory">Контроль территории</option>
+            </select>
+            <button onclick="submitOrder()">Отправить заказ</button>
+        </div>
     </div>
 
-    <!-- Музыка слева + картинка -->
-    <div id="musicBlock">
-        <!-- Проверьте точное имя файла и расширение в репозитории (например, .png или .jpg) -->
-        <img class="cover-image" src="assets/img/featured.png" alt="Обложка">
-        <audio id="bgMusic" src="assets/img/Spies!_-_Lobby_Music_-_Fortnite.ogg" controls loop muted></audio>
-    </div>
+    <audio autoplay loop>
+        <source src="spy_theme.mp3" type="audio/mp3">
+    </audio>
 
-    <!-- Блок для будущего редактирования -->
-    <div id="editableSection">
-        <p><font size=4 ></font></p>
-    <p> <br>История: </br>
-         <br>Команда «Призрак» (GHOST) - была основана легендарным агентом Мидасом </br> <img class="cover-image" scr="assets/img/GHOST_29_-_Logo_-_Fortnite.png" alt="Лого"> <br>как часть его стремления создать империю шпионажа и влияния.</br> <br> С момента своего появления во второй главе, первом сезоне,</br> «Призрак» стала ключевым игроком в борьбе за контроль над островом.</p>
-    </div>
+    <script>
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openModal() {
+            document.getElementById('order-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('order-modal').style.display = 'none';
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const service = document.getElementById('service').value;
+            if (name && email) {
+                alert(`Заказ отправлен!\nИмя: ${name}\nEmail: ${email}\nУслуга: ${service}`);
+                closeModal();
+            } else {
+                alert('Пожалуйста, заполните все поля.');
+            }
+        }
+    </script>
 </body>
 </html>
