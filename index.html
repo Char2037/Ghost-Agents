@@ -46,9 +46,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-image: url('ghost_background.jpg');
-            background-size: cover;
-            background-attachment: fixed;
+            background-color: #000;
             color: #fff;
             font-family: Arial, sans-serif;
         }
@@ -75,21 +73,22 @@
         nav a {
             color: white;
             text-decoration: none;
+            padding: 5px 10px;
+            background-color: rgba(85, 85, 85, 0.7); /* "Чёлка" effect for buttons */
+            border-radius: 5px;
         }
         nav a:hover {
-            color: #ccc;
+            background-color: rgba(119, 119, 119, 0.7);
         }
         section {
-            padding: 10px 20px;
+            padding: 10px 100px; /* Increased side padding for image space */
             min-height: 100vh;
+            margin-left: 100px; /* Space for left image */
+            margin-right: 100px; /* Space for right image */
         }
         #home {
             text-align: center;
             margin-bottom: 0;
-        }
-        #home img {
-            max-width: 200px;
-            margin: 10px 0;
         }
         #home h1 {
             margin: 0;
@@ -191,7 +190,6 @@
     </nav>
 
     <section id="home">
-        <img src="assets/img/GHOST_29_-_Logo_-_Fortnite.png" alt="Логотип Призрак">
         <h1>Агентство Призрак</h1>
         <p>Ведущая организация шпионажа и наемных операций на острове Аполло.</p>
     </section>
@@ -205,7 +203,7 @@
             <li>Основание штаб-квартиры «Агентство» — центра шпионских операций в Chapter 2: Season 2.</li>
             <li>Контроль над стратегическими объектами: The Yacht, The Shark и The Fortilla.</li>
             <li>Успешное противостояние фракции SHADOW в шпионской войне.</li>
-            <li>Разработка устройства Судного дня под руководством Мидаса и Джулс для борьбы со Штормом.</li>
+            <li>Разработка устройства Судного дня под руководством МиМидаса и Джулс для борьбы со Штормом.</li>
             <li>Создание The Fortilla — плавучей базы после наводнения на острове.</li>
             <li>Привлечение элитных агентов, таких как Оушен, Скай и Миусклс.</li>
         </ul>
@@ -277,7 +275,7 @@
     </div>
 
     <audio autoplay loop>
-        <source src="assets/img/aspose_audio_compress_133940430915946795.ogg" type="audio/mp3">
+        <source src="spy_theme.mp3" type="audio/mp3">
     </audio>
 
     <script>
